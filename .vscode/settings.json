@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Zombies vs plants.sln"
+    "dotnet.defaultSolution": "Zombies-vs-plants.sln"
 }
