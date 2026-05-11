@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6710134748172086795}
   - component: {fileID: 6738877296899294540}
   - component: {fileID: 3828827388468774926}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Wizard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +108,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5089681919955677928}
   - component: {fileID: 9040597246015387514}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}

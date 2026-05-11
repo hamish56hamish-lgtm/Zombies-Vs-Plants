@@ -1045,6 +1045,10 @@ MonoBehaviour:
   WizardTowerPrefab: {fileID: 6446104146747370742, guid: d689ae7ae907f1e42ae7ab404e78b31d, type: 3}
   PyroZombiePrefab: {fileID: 6446104146747370742, guid: 18fedf9108710d54687f923d2761d3ae, type: 3}
   PlacedTowers: {fileID: 419992397}
+  placementRadius: 0.5
+  towerLayer:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!4 &830756075
 Transform:
   m_ObjectHideFlags: 0

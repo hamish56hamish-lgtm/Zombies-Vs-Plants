@@ -8,16 +8,16 @@ public class MouseFollowManager : MonoBehaviour
 
     [SerializeField] private GameObject holdingTower;
     public GameObject WizardTowerPrefab;
-
     public GameObject PyroZombiePrefab;
-    
+
     public Transform PlacedTowers;
+
+    public float placementRadius = 0.5f; // adjust depending on tower size
+    public LayerMask towerLayer;
 
     void Start()
     {
         holdingTower = WizardTowerPrefab;
-
-
         SetChildPrefab(holdingTower);
     }
 
@@ -41,18 +41,32 @@ public class MouseFollowManager : MonoBehaviour
             holdingTower = PyroZombiePrefab;
             SetChildPrefab(holdingTower);
         }
+
         if (Input.GetMouseButtonDown(0))
         {
             Vector3 pos = MainCamera.ScreenToWorldPoint(Input.mousePosition);
             pos.z = 0f;
 
-            Instantiate(holdingTower, pos, Quaternion.identity, PlacedTowers);
+            // Check if another tower is already here
+            Collider2D hit = Physics2D.OverlapCircle(
+                pos,
+                placementRadius,
+                towerLayer
+            );
+
+            if (hit == null)
+            {
+                Instantiate(holdingTower, pos, Quaternion.identity, PlacedTowers);
+            }
+            else
+            {
+                Debug.Log("Can't place here!");
+            }
         }
     }
 
     public void SetChildPrefab(GameObject newPrefab)
     {
-
         foreach (Transform children in transform)
         {
             Destroy(children.gameObject);
