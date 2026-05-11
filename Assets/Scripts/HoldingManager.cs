@@ -7,12 +7,13 @@ public class MouseFollowManager : MonoBehaviour
     public Camera MainCamera;
 
     [SerializeField] private GameObject holdingTower;
+
     public GameObject WizardTowerPrefab;
     public GameObject PyroZombiePrefab;
 
     public Transform PlacedTowers;
 
-    public float placementRadius = 0.5f; // adjust depending on tower size
+    public float placementRadius = 0.5f;
     public LayerMask towerLayer;
 
     void Start()
@@ -47,16 +48,36 @@ public class MouseFollowManager : MonoBehaviour
             Vector3 pos = MainCamera.ScreenToWorldPoint(Input.mousePosition);
             pos.z = 0f;
 
-            // Check if another tower is already here
-            Collider2D hit = Physics2D.OverlapCircle(
+            Collider2D[] hits = Physics2D.OverlapCircleAll(
                 pos,
-                placementRadius,
-                towerLayer
+                placementRadius
             );
 
-            if (hit == null)
+            bool canPlace = true;
+
+            foreach (Collider2D hit in hits)
             {
-                Instantiate(holdingTower, pos, Quaternion.identity, PlacedTowers);
+                if (((1 << hit.gameObject.layer) & towerLayer) != 0)
+                {
+                    canPlace = false;
+                    break;
+                }
+
+                if (hit.CompareTag("Block"))
+                {
+                    canPlace = false;
+                    break;
+                }
+            }
+
+            if (canPlace)
+            {
+                Instantiate(
+                    holdingTower,
+                    pos,
+                    Quaternion.identity,
+                    PlacedTowers
+                );
             }
             else
             {
@@ -78,5 +99,20 @@ public class MouseFollowManager : MonoBehaviour
 
         child.localPosition = Vector3.zero;
         child.localRotation = Quaternion.identity;
+
+        Collider2D[] colliders = obj.GetComponentsInChildren<Collider2D>();
+
+        foreach (Collider2D col in colliders)
+        {
+            col.enabled = false;
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (child == null) return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(child.position, placementRadius);
     }
 }
