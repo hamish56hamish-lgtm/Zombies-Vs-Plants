@@ -78,6 +78,9 @@ public class MouseFollowManager : MonoBehaviour
                     Quaternion.identity,
                     PlacedTowers
                 );
+
+
+                
             }
             else
             {

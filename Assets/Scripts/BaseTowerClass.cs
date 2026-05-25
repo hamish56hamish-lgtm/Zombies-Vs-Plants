@@ -14,15 +14,51 @@ public class BaseTowerClass : MonoBehaviour
 
     public int Attack_DMG = 5;
 
-    // Start is called before the first frame update
+    public GameObject AttackRange;
+
+    public bool HitAttackRange = false;
+
     void Start()
     {
         Current_Health = Max_Health;
+
+
     }
 
-    // Update is called once per frame
     void Update()
     {
-        
+        AttackRange.transform.localScale = new Vector3(Shooting_Range, Shooting_Range, Shooting_Range);
+
+        if (transform.parent.CompareTag("Placed_Towers_Parent"))
+        {
+
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+            Collider2D hit = Physics2D.OverlapPoint(mousePos);
+
+            HitAttackRange = false;
+
+            HitAttackRange = hit != null && hit.name == "AttackRange";
+
+            transform.Find("AttackRange").GetComponent<SpriteRenderer>().enabled = HitAttackRange;
+
+            Transform circle = transform.Find("Circle");
+
+            //print("Found Circle");
+
+            if (circle != null)
+            {
+                if (HitAttackRange == false)
+                {
+                    circle.gameObject.SetActive(false);
+                }
+                else
+                {
+                    circle.gameObject.SetActive(true);
+                }
+            }
+            
+        }
+
     }
 }
