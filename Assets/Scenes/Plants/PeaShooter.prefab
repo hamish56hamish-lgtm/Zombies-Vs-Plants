@@ -112,3 +112,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 3
   reachDistance: 0.1
+  Max_Health: 5
+  Current_Health: 0

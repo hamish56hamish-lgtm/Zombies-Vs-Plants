@@ -1,3 +1,4 @@
+using UnityEditor.UI;
 using UnityEngine;
 
 public class MouseFollowManager : MonoBehaviour
@@ -16,14 +17,39 @@ public class MouseFollowManager : MonoBehaviour
     public float placementRadius = 0.5f;
     public LayerMask towerLayer;
 
+    public bool InGame = false;
+
+    public GameObject HoldingManager;
+
     void Start()
+    {
+        HoldingManager.SetActive(false);
+    }
+    public void StartGame()
     {
         holdingTower = WizardTowerPrefab;
         SetChildPrefab(holdingTower);
+        InGame = true;
+        HoldingManager.SetActive(true);
+        
     }
+
+    void EndGame()
+    {
+        InGame = false;
+        HoldingManager.SetActive(false);
+
+    }
+
 
     void Update()
     {
+
+
+
+        if (InGame == false) return;
+
+
         if (child == null) return;
 
         Vector3 mousePos = MainCamera.ScreenToWorldPoint(Input.mousePosition);

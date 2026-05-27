@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Block
   - Placed_Towers_Parent
+  - Bullet
   layers:
   - Default
   - TransparentFX

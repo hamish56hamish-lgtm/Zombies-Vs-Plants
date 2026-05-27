@@ -7,11 +7,22 @@ public class EnemyPathFollow : MonoBehaviour
     public float moveSpeed = 3f;
     public float reachDistance = 0.1f;
 
+    public int Max_Health = 5;
+    public int Current_Health = 0;
+
+    private Manager gameManager;
     private Transform[] waypoints;
     private int currentWaypointIndex = 0;
 
     void Start()
     {
+
+        Current_Health = Max_Health;
+
+
+
+        gameManager = Object.FindFirstObjectByType<Manager>(); 
+
         PathManager path = FindFirstObjectByType<PathManager>();
 
         if (path != null)
@@ -45,7 +56,19 @@ public class EnemyPathFollow : MonoBehaviour
             if (currentWaypointIndex >= waypoints.Length)
             {
                 Destroy(gameObject);
+
+                gameManager.TakeDamage(Current_Health);
+
             }
         }
+
     }
+    public void Death()
+    {
+        Destroy(gameObject);
+        gameManager.Cash += 150;
+        gameManager.UpdateUI();
+    }
+
+
 }

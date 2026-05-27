@@ -18,15 +18,38 @@ public class BaseTowerClass : MonoBehaviour
 
     public bool HitAttackRange = false;
 
+    public bool InGame = false;
+
+    public GameObject Self;
+
+    private Manager gameManager;
+
+    private GameObject Bullet;
+
     void Start()
     {
+        gameManager = Object.FindFirstObjectByType<Manager>(); 
+        Bullet = gameManager.Bullet;
+    }
+
+    void StartGame()
+    {
         Current_Health = Max_Health;
+        InGame = true;
+        Self.SetActive(true);
+    }
 
-
+    void EndGame()
+    {
+        InGame = false;
+        Self.SetActive(false);
     }
 
     void Update()
     {
+
+        if (InGame == false) return;
+
         AttackRange.transform.localScale = new Vector3(Shooting_Range, Shooting_Range, Shooting_Range);
 
         if (transform.parent.CompareTag("Placed_Towers_Parent"))
@@ -44,7 +67,6 @@ public class BaseTowerClass : MonoBehaviour
 
             Transform circle = transform.Find("Circle");
 
-            //print("Found Circle");
 
             if (circle != null)
             {
@@ -57,6 +79,9 @@ public class BaseTowerClass : MonoBehaviour
                     circle.gameObject.SetActive(true);
                 }
             }
+
+
+            
             
         }
 
