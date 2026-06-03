@@ -57,17 +57,28 @@ public class EnemyPathFollow : MonoBehaviour
             {
                 Destroy(gameObject);
 
+                gameManager.KilledPerWave += 1;
                 gameManager.TakeDamage(Current_Health);
+                gameManager.UpdateUI();
 
             }
         }
+
+        if (Current_Health < 0)
+        {
+            Death();
+        }
+
 
     }
     public void Death()
     {
         Destroy(gameObject);
+        gameManager.KilledPerWave += 1;
         gameManager.Cash += 150;
         gameManager.UpdateUI();
+        gameManager.KilledAEnemy();
+
     }
 
 

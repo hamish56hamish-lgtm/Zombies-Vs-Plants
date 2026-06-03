@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 6130540217600837804}
   - component: {fileID: 4434705047043642946}
   m_Layer: 6
-  m_Name: PeaShooter
+  m_Name: PeaShooterRed
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -89,7 +89,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 7
-  m_Sprite: {fileID: 21300000, guid: 5420e3e0435a6f54ea9a422ecfb39959, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 38efdf79aabb09f4bb217ae172055f53, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -112,9 +112,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b038f22ef9e73b948847328133039325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 3
+  moveSpeed: 8
   reachDistance: 0.1
-  Max_Health: 5
+  Max_Health: 35
   Current_Health: 0
 --- !u!50 &6130540217600837804
 Rigidbody2D:

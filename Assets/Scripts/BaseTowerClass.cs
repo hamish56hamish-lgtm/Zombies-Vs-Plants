@@ -5,12 +5,16 @@ using UnityEngine;
 public class BaseTowerClass : MonoBehaviour
 {
 
+
+    public List<GameObject> enemiesInRange = new List<GameObject>();
+
     public int Max_Health = 100;
     public int Current_Health = 0;
 
     public float Shooting_Range = 67.53f;
 
     public float Fire_Rate = 3.0f;
+    private float fireCountdown = 0f;
 
     public int Attack_DMG = 5;
 
@@ -20,48 +24,79 @@ public class BaseTowerClass : MonoBehaviour
 
     public bool InGame = false;
 
-    public GameObject Self;
-
     private Manager gameManager;
 
     private GameObject Bullet;
 
+
+
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+
+
+        if (other.CompareTag("Enemy"))
+        {
+            enemiesInRange.Add(other.gameObject);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            enemiesInRange.Remove(other.gameObject);
+        }
+    }
     void Start()
     {
         gameManager = Object.FindFirstObjectByType<Manager>(); 
         Bullet = gameManager.Bullet;
+        InGame = gameManager.InGame;
+        StartGame();
     }
 
     void StartGame()
     {
         Current_Health = Max_Health;
         InGame = true;
-        Self.SetActive(true);
+        gameObject.SetActive(true);
     }
 
     void EndGame()
     {
         InGame = false;
-        Self.SetActive(false);
+        gameObject.SetActive(false);
     }
 
     void Update()
     {
+        if (gameManager != null)
+        {
+            InGame = gameManager.InGame;
+        }
+
 
         if (InGame == false) return;
-
         AttackRange.transform.localScale = new Vector3(Shooting_Range, Shooting_Range, Shooting_Range);
+
+        CountEnemysInRange();
 
         if (transform.parent.CompareTag("Placed_Towers_Parent"))
         {
-
             Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 
             Collider2D hit = Physics2D.OverlapPoint(mousePos);
 
             HitAttackRange = false;
 
-            HitAttackRange = hit != null && hit.name == "AttackRange";
+            if (hit != null && hit.name == "AttackRange")
+            {
+                if (hit.transform.parent == this.transform)
+                {
+                    HitAttackRange = true;
+                }
+            }
 
             transform.Find("AttackRange").GetComponent<SpriteRenderer>().enabled = HitAttackRange;
 
@@ -86,4 +121,47 @@ public class BaseTowerClass : MonoBehaviour
         }
 
     }
+    private void CountEnemysInRange()
+    {
+        enemiesInRange.RemoveAll(enemy => enemy == null);
+
+        if (fireCountdown > 0f)
+        {
+            fireCountdown -= Time.deltaTime;
+        }
+
+        if (enemiesInRange.Count > 0)
+        {
+            GameObject target = enemiesInRange[0];
+            
+            if (target != null)
+            {
+                if (fireCountdown <= 0f)
+                {
+                    Shoot(target);
+                    fireCountdown = 1f / Fire_Rate;
+                }
+            }
+        }
+    }
+
+    private void Shoot(GameObject target)
+    {
+
+
+        if (Bullet == null)
+        {
+            return;
+        }
+
+        GameObject bulletGO = Instantiate(Bullet, transform.position, Quaternion.identity);
+
+        BulletScript bulletScript = bulletGO.GetComponent<BulletScript>();
+        
+        if (bulletScript != null)
+        {
+            bulletScript.Seek(target, Attack_DMG);
+        }
+    }
+
 }

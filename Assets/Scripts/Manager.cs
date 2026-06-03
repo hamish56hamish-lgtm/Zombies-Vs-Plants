@@ -1,12 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Manager : MonoBehaviour
 {
-    
     public GameObject MainMenu;
     public GameObject GameUI;
 
@@ -22,24 +22,49 @@ public class Manager : MonoBehaviour
     public TMP_Text HealthText;
     public TMP_Text CashText;
 
+    public TMP_Text WaveText;
+
     public GameObject Bullet;
 
     public int Wave = 1;
 
     public GameObject EnemysManager;
 
-    public List<GameObject> enemyPrefabs = new List<GameObject>();
+    [System.Serializable]
+    public class EnemySpawnData
+    {
+        public string enemyName;
+        public GameObject prefab;
+        public float spawnDelay = 1f;
+    }
+    public EnemySpawnData[] enemyTypes;
 
+    public bool InGame;
 
+    private bool FinishedSpawning = true;
+
+    private int SpawnAmount = 10;
+
+    public int KilledPerWave = 0;
+
+    private int EnemyToSpawn = 0;
 
 
     void Start()
     {
-        
+        InGame = false;
         MainMenuStart();
+    }
 
-
-
+    void Update()
+    {
+        if (KilledPerWave == SpawnAmount && FinishedSpawning)
+        {
+            KilledPerWave = 0;
+            StartSpawning();
+            Wave += 1;
+            UpdateUI();
+        }
     }
 
     void MainMenuStart()
@@ -48,6 +73,7 @@ public class Manager : MonoBehaviour
         GameUI.SetActive(false);
         GameLevelStuff.SetActive(false);
     }
+
     public void StartGame()
     {
         MainMenu.SetActive(false);
@@ -56,9 +82,9 @@ public class Manager : MonoBehaviour
         Current_Health = Max_Health;
 
         UpdateUI();
-
         StartSpawning();
-
+        InGame = true;
+        UpdateUI();
     }
 
     public void TakeDamage(int DamageAmount)
@@ -76,33 +102,61 @@ public class Manager : MonoBehaviour
     {
         HealthText.text = Current_Health.ToString();
         CashText.text = "$" + Cash.ToString();
-
+        WaveText.text = "Wave " + Wave.ToString();
     }
-
 
     public void StartSpawning()
     {
-        StartCoroutine(SpawnEnemies());
+        if (FinishedSpawning == true)
+        {
+            StartCoroutine(SpawnEnemies());
+        }
+        else
+        {
+            Debug.Log("Must wait to spawn more");
+        }
     }
 
     IEnumerator SpawnEnemies()
     {
-        for (int i = 0; i < 10; i++)
-        {
-            Debug.Log("Its Spawning?");
+        FinishedSpawning = false;
+        yield return new WaitForSeconds(5f);
 
-            if (enemyPrefabs.Count == 0) yield break;
+        SpawnAmount = 5 * Wave;
+
+        for (int i = 0; i < SpawnAmount; i++)
+        {
+            if (enemyTypes == null || enemyTypes.Length == 0) yield break;
+
+            if (Wave < 2)
+            {
+                EnemyToSpawn = 0;
+            }
+            else if (Wave >= 2 && Wave < 5)
+            {
+                EnemyToSpawn = Random.Range(0, 2);
+            }
+            else
+            {
+                EnemyToSpawn = Random.Range(0, enemyTypes.Length);
+            }
+
+            EnemySpawnData chosenEnemy = enemyTypes[EnemyToSpawn];
 
             Instantiate(
-                enemyPrefabs[0],
+                chosenEnemy.prefab,
                 transform.position,
                 Quaternion.identity,
                 EnemysManager.transform
             );
 
-            yield return new WaitForSeconds(1f); // ⬅ delay between spawns
+            yield return new WaitForSeconds(chosenEnemy.spawnDelay);
         }
+        FinishedSpawning = true;
     }
 
-
+    public void KilledAEnemy()
+    {
+        Debug.Log("Killed Already: " + KilledPerWave.ToString() + "Spawned Amount: " + SpawnAmount.ToString());
+    }
 }
