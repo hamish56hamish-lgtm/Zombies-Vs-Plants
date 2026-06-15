@@ -1,5 +1,6 @@
 using UnityEditor.UI;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class MouseFollowManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class MouseFollowManager : MonoBehaviour
 
     [SerializeField] private GameObject holdingTower;
 
+    private Manager gameManager;
     public GameObject WizardTowerPrefab;
     public GameObject PyroZombiePrefab;
 
@@ -21,13 +23,22 @@ public class MouseFollowManager : MonoBehaviour
 
     public GameObject HoldingManager;
 
+    public int Tower_Cost = 0;
+
+    private Dictionary<string, int> prefabCosts = new Dictionary<string, int>
+    {
+        { "WizardTowerPrefab", 500 },
+        { "PyroZombiePrefab", 250 }
+    };
     void Start()
     {
         HoldingManager.SetActive(false);
+        gameManager = Object.FindFirstObjectByType<Manager>(); 
     }
     public void StartGame()
     {
         holdingTower = WizardTowerPrefab;
+        Tower_Cost = prefabCosts["WizardTowerPrefab"];
         SetChildPrefab(holdingTower);
         InGame = true;
         HoldingManager.SetActive(true);
@@ -60,12 +71,14 @@ public class MouseFollowManager : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             holdingTower = WizardTowerPrefab;
+            Tower_Cost = prefabCosts["WizardTowerPrefab"];
             SetChildPrefab(holdingTower);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
         {
             holdingTower = PyroZombiePrefab;
+            Tower_Cost = prefabCosts["PyroZombiePrefab"];
             SetChildPrefab(holdingTower);
         }
 
@@ -96,14 +109,27 @@ public class MouseFollowManager : MonoBehaviour
                 }
             }
 
+            if (gameManager.Cash >= Tower_Cost)
+            {
+                canPlace = true;
+            }
+            else
+            {
+                canPlace = false;
+                return;
+            }
+
             if (canPlace)
             {
+                gameManager.Cash -= Tower_Cost;
+                gameManager.UpdateUI();
                 Instantiate(
                     holdingTower,
                     pos,
                     Quaternion.identity,
                     PlacedTowers
                 );
+
 
 
                 

@@ -10,6 +10,8 @@ public class Manager : MonoBehaviour
     public GameObject MainMenu;
     public GameObject GameUI;
 
+    public GameObject DeathMenu;
+
     public GameObject HoldingManager;
 
     public GameObject GameLevelStuff;
@@ -23,6 +25,9 @@ public class Manager : MonoBehaviour
     public TMP_Text CashText;
 
     public TMP_Text WaveText;
+
+    public TMP_Text Wave_Completed_Text_Death_Menu;
+    public TMP_Text Cash_Text_Death_Menu;
 
     public GameObject Bullet;
 
@@ -53,6 +58,7 @@ public class Manager : MonoBehaviour
     void Start()
     {
         InGame = false;
+        DeathMenu.SetActive(false);
         MainMenuStart();
     }
 
@@ -91,11 +97,22 @@ public class Manager : MonoBehaviour
     {
         Current_Health -= DamageAmount;
         UpdateUI();
+
+        if (Current_Health > 0)
+        {
+            Death();
+        }
     }
 
     public void Death()
     {
         Debug.Log("You have died! lol");
+        DeathMenu.SetActive(true);
+        MainMenu.SetActive(false);
+        GameUI.SetActive(false);
+
+        Wave_Completed_Text_Death_Menu.text = "Waves: " + Wave.ToString();
+        Cash_Text_Death_Menu.text = "Cash: $" + Cash.ToString();
     }
 
     public void UpdateUI()
@@ -132,9 +149,13 @@ public class Manager : MonoBehaviour
             {
                 EnemyToSpawn = 0;
             }
-            else if (Wave >= 2 && Wave < 5)
+            else if (Wave >= 2 && Wave < 4)
             {
                 EnemyToSpawn = Random.Range(0, 2);
+            }
+            else if (Wave >= 4 && Wave < 8)
+            {
+                EnemyToSpawn = Random.Range(1, 3);
             }
             else
             {
