@@ -14,6 +14,8 @@ public class EnemyPathFollow : MonoBehaviour
     private Transform[] waypoints;
     private int currentWaypointIndex = 0;
 
+    public bool StopMovement = false;
+
     void Start()
     {
 
@@ -41,6 +43,9 @@ public class EnemyPathFollow : MonoBehaviour
         if (waypoints == null || waypoints.Length == 0)
             return;
 
+        if (StopMovement)
+            return;
+
         Transform target = waypoints[currentWaypointIndex];
 
         transform.position = Vector2.MoveTowards(
@@ -48,6 +53,12 @@ public class EnemyPathFollow : MonoBehaviour
             target.position,
             moveSpeed * Time.deltaTime
         );
+
+
+        if (gameManager.Dead)
+        {
+            StopMovement = true;
+        }
 
         if (Vector2.Distance(transform.position, target.position) < reachDistance)
         {

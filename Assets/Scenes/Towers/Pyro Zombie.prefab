@@ -158,7 +158,6 @@ MonoBehaviour:
   AttackRange: {fileID: 8666779109444684328}
   HitAttackRange: 0
   InGame: 0
-  Self: {fileID: 0}
 --- !u!50 &7309003374147297501
 Rigidbody2D:
   serializedVersion: 4

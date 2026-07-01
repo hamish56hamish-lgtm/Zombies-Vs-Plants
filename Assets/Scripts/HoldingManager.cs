@@ -8,7 +8,7 @@ public class MouseFollowManager : MonoBehaviour
 
     public Camera MainCamera;
 
-    [SerializeField] private GameObject holdingTower;
+    [SerializeField] public GameObject holdingTower;
 
     private Manager gameManager;
     public GameObject WizardTowerPrefab;
@@ -45,7 +45,7 @@ public class MouseFollowManager : MonoBehaviour
         
     }
 
-    void EndGame()
+    public void EndGame()
     {
         InGame = false;
         HoldingManager.SetActive(false);
@@ -73,6 +73,7 @@ public class MouseFollowManager : MonoBehaviour
             holdingTower = WizardTowerPrefab;
             Tower_Cost = prefabCosts["WizardTowerPrefab"];
             SetChildPrefab(holdingTower);
+            gameManager.SelectHotBarItem(0);
         }
 
         if (Input.GetKeyDown(KeyCode.Alpha2))
@@ -80,6 +81,7 @@ public class MouseFollowManager : MonoBehaviour
             holdingTower = PyroZombiePrefab;
             Tower_Cost = prefabCosts["PyroZombiePrefab"];
             SetChildPrefab(holdingTower);
+            gameManager.SelectHotBarItem(1);
         }
 
         if (Input.GetMouseButtonDown(0))

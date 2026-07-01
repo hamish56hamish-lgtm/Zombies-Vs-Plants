@@ -10,9 +10,14 @@ public class Manager : MonoBehaviour
     public GameObject MainMenu;
     public GameObject GameUI;
 
+    public GameObject PlacedTowers;
+
+
+    public GameObject HotBarItemsParent;
+
     public GameObject DeathMenu;
 
-    public GameObject HoldingManager;
+    public MouseFollowManager HoldingManager;
 
     public GameObject GameLevelStuff;
 
@@ -33,7 +38,11 @@ public class Manager : MonoBehaviour
 
     public int Wave = 1;
 
+    public bool Dead = false;
+
     public GameObject EnemysManager;
+
+    
 
     [System.Serializable]
     public class EnemySpawnData
@@ -57,6 +66,11 @@ public class Manager : MonoBehaviour
 
     void Start()
     {
+        
+        Dead = false;
+
+        HoldingManager = Object.FindFirstObjectByType<MouseFollowManager>(); 
+
         InGame = false;
         DeathMenu.SetActive(false);
         MainMenuStart();
@@ -64,6 +78,11 @@ public class Manager : MonoBehaviour
 
     void Update()
     {
+        if (InGame == false)
+        {
+            return;
+        }
+
         if (KilledPerWave == SpawnAmount && FinishedSpawning)
         {
             KilledPerWave = 0;
@@ -91,6 +110,8 @@ public class Manager : MonoBehaviour
         StartSpawning();
         InGame = true;
         UpdateUI();
+
+        Dead = false;
     }
 
     public void TakeDamage(int DamageAmount)
@@ -98,7 +119,7 @@ public class Manager : MonoBehaviour
         Current_Health -= DamageAmount;
         UpdateUI();
 
-        if (Current_Health > 0)
+        if (Current_Health <= 0)
         {
             Death();
         }
@@ -111,8 +132,49 @@ public class Manager : MonoBehaviour
         MainMenu.SetActive(false);
         GameUI.SetActive(false);
 
+        Dead = true;
+
         Wave_Completed_Text_Death_Menu.text = "Waves: " + Wave.ToString();
         Cash_Text_Death_Menu.text = "Cash: $" + Cash.ToString();
+    }
+
+    public void Go_To_Main_Menu()
+    {
+        DeathMenu.SetActive(false);
+        GameUI.SetActive(false);
+
+        HoldingManager.EndGame();
+
+        MainMenu.SetActive(true);
+
+        InGame = false;
+
+        FinishedSpawning = true;
+
+        SpawnAmount = 10;
+
+        KilledPerWave = 0;
+
+        EnemyToSpawn = 0;
+
+        Wave = 1;
+
+        Cash = 1000;
+
+        Max_Health = 100;
+        Current_Health = 0;
+
+        foreach (Transform child in EnemysManager.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        foreach (Transform child in PlacedTowers.transform)
+        {
+            Destroy(child.gameObject);
+        }
+
+        Dead = false;
     }
 
     public void UpdateUI()
@@ -120,6 +182,32 @@ public class Manager : MonoBehaviour
         HealthText.text = Current_Health.ToString();
         CashText.text = "$" + Cash.ToString();
         WaveText.text = "Wave " + Wave.ToString();
+    }
+
+    public void SelectHotBarItem(int index)
+    {
+        foreach (Transform child in HotBarItemsParent.transform)
+        {
+            Image image = child.GetComponent<Image>();
+
+            if (image != null)
+            {
+                image.color = Color.white;
+            }
+        }
+
+        Transform selected = HotBarItemsParent.transform.GetChild(index);
+
+        Image selectedImage = selected.GetComponent<Image>();
+
+        if (selectedImage != null)
+        {
+            Color color;
+
+            ColorUtility.TryParseHtmlString("#92FF9A", out color);
+
+            selectedImage.color = color;
+        }
     }
 
     public void StartSpawning()

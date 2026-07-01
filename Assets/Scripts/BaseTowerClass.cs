@@ -8,6 +8,8 @@ public class BaseTowerClass : MonoBehaviour
 
     public List<GameObject> enemiesInRange = new List<GameObject>();
 
+    private SpriteRenderer spriteRenderer;
+
     public int Max_Health = 100;
     public int Current_Health = 0;
 
@@ -50,9 +52,12 @@ public class BaseTowerClass : MonoBehaviour
     }
     void Start()
     {
-        gameManager = Object.FindFirstObjectByType<Manager>(); 
+        gameManager = Object.FindFirstObjectByType<Manager>();
         Bullet = gameManager.Bullet;
         InGame = gameManager.InGame;
+
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+
         StartGame();
     }
 
@@ -77,10 +82,16 @@ public class BaseTowerClass : MonoBehaviour
         }
 
 
+        if (gameManager.Dead)
+        {
+            EndGame();
+        }
+
         if (InGame == false) return;
         AttackRange.transform.localScale = new Vector3(Shooting_Range, Shooting_Range, Shooting_Range);
 
         CountEnemysInRange();
+
 
         if (transform.parent.CompareTag("Placed_Towers_Parent"))
         {
@@ -147,17 +158,25 @@ public class BaseTowerClass : MonoBehaviour
 
     private void Shoot(GameObject target)
     {
+        if (Bullet == null) return;
 
-
-        if (Bullet == null)
+        // Flip tower based on target direction
+        if (spriteRenderer != null)
         {
-            return;
+            if (target.transform.position.x < transform.position.x)
+            {
+                spriteRenderer.flipX = true;  // face left
+            }
+            else
+            {
+                spriteRenderer.flipX = false; // face right
+            }
         }
 
         GameObject bulletGO = Instantiate(Bullet, transform.position, Quaternion.identity);
 
         BulletScript bulletScript = bulletGO.GetComponent<BulletScript>();
-        
+
         if (bulletScript != null)
         {
             bulletScript.Seek(target, Attack_DMG);
